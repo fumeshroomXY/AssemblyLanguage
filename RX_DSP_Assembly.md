@@ -123,3 +123,24 @@ _OVERFLOW_CHECK .MACRO rsltcode
 
 - `.ENDM`
   - End of the macro definition
+
+# MOV and MOVU
+On the RX, the important difference is what happens **when a smaller value is loaded into a wider register**:
+
+- `movu.w [address], r4` loads 16 bits and **zero-extends** them to 32 bits.
+- `mov.w [address], r4` loads 16 bits and sign-extends them to 32 bits.
+
+
+For example, the 16-bit pattern `0xFFFF` becomes:
+
+- With `movu.w`: `0x0000FFFF` — unsigned 65535
+- With `mov.w`: `0xFFFFFFFF` — signed −1
+
+
+The bits in memory do **not** have a signed or unsigned label; 
+
+The instruction determines **how they’re extended** when loading them into a larger register.
+
+`mov.w r4, [r3]`
+- When storing a 32-bit register to 16-bit memory, only the **low 16 bits are written**. 
+- No signed/unsigned conversion occurs during that store.
